@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Simple Name & Country Form</title>
+		<style>
+			body { font-family: Arial, Helvetica, sans-serif; padding: 2rem; background: #f7f9fc; }
+			.card { background: white; padding: 1.25rem; border-radius: 8px; max-width: 520px; box-shadow: 0 6px 18px rgba(0,0,0,0.06); }
+			label { display:block; margin-top: 0.75rem; font-weight:600 }
+			input[type="text"], select { width:100%; padding:0.5rem; margin-top:0.25rem; border:1px solid #d6dbe6; border-radius:4px }
+			button { margin-top:1rem; padding:0.6rem 1rem; border:none; background:#2563eb; color:white; border-radius:6px; cursor:pointer }
+			button:active { transform: translateY(1px) }
+			#result { margin-top:1rem; padding:0.75rem; background:#f1f5ff; border-radius:6px }
+		</style>
+	</head>
+	<body>
+		<div class="card">
+			<h1>Say hello</h1>
+			<p>Enter your name and select your country.</p>
+
+			<form id="personForm">
+				<label for="name">Name</label>
+				<input id="name" name="name" type="text" placeholder="Your name" required />
+
+				<label for="country">Country</label>
+				<input id="country" name="country" type="text" placeholder="Your country" required />
+
+				<button type="submit">Submit</button>
+			</form>
+
+			<div id="helloBox" aria-live="polite" style="display:none">
+			</div>
+		</div>
+
+			<script>
+function getCountryFacts(name, country) {
+			  const url = "http://localhost:3000/facts?name=" + name + "&country=" + country;
+
+			  return fetch(url).then(res => res.text())
+			}
+
+			const form = document.getElementById('personForm');
+			const helloBox = document.getElementById('helloBox');
+
+form.addEventListener('submit', function(e) {
+			  e.preventDefault();
+			  const name = document.getElementById('name').value.trim();
+			  const country = document.getElementById('country').value.trim();
+			  if (name && country) {
+			    getCountryFacts(name, country).then(facts => {
+			      helloBox.textContent = `Hello ${name}, you are from ${country}. Here are some facts about your country: ${facts}`;
+			      helloBox.style.display = 'block';
+			    }).catch(() => {
+			      helloBox.textContent = `Hello ${name}, you are from ${country}. Sorry, could not fetch facts right now.`;
+			      helloBox.style.display = 'block';
+			    });
+			  } else {
+			    helloBox.style.display = 'none';
+			  }
+			});
+		</script>
+	</body>
+</html>
+
